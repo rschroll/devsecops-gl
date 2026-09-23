@@ -71,3 +71,20 @@ integration-test:
     - uv sync
     - uv run pytest -v tests/test_integration.py
 
+build-image:
+  stage: build
+  image: docker:27-cli
+  services:
+    - docker:27-dind
+  variables:
+    DOCKER_TLS_CERTDIR: "/certs"
+  script:
+    - echo "Testing that the Docker image builds successfully..."
+    - docker build project/images/web-service -t web-service
+    - echo "Exporting image to a tarball file..."
+    - docker save -o web-service.tar web-service:latest
+  artifacts:
+    name: "docker-image-$CI_COMMIT_REF_SLUG"
+    paths:
+      - web-service.tar
+    expire_in: 1 day
