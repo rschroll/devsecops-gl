@@ -1,8 +1,13 @@
+stages:
+  - test
+  - build
+  
 variables:
   UV_IMAGE: "ghcr.io/astral-sh/uv:python3.14-alpine"
   UV_LINK_MODE: copy
 
 unit-test:
+  stage: test
   image: $UV_IMAGE
   script:
     - cd project/images/web-service/
@@ -11,6 +16,7 @@ unit-test:
     - uv run pytest -v tests/test_unit.py
 
 lint:
+  stage: test
   image: $UV_IMAGE
   script:
     - cd project/images/web-service
@@ -18,6 +24,7 @@ lint:
     - uv run ruff check src/
 
 validate-k8s-manifests:
+  stage: test
   script:
     - |
       curl -Lo kubeconform.tar.gz \
