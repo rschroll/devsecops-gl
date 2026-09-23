@@ -23,7 +23,7 @@ def test_increment_visits_local(mock_increment_local, mock_increment_s3):
 
 @patch('web_service.increment_visits_s3')
 @patch('web_service.increment_visits_local')
-def test_increment_visits_local(mock_increment_local, mock_increment_s3):
+def test_increment_visits_s3(mock_increment_local, mock_increment_s3):
     with patch('web_service.COUNTER_FILE', new='s3://counter/count.txt'):
         web_service.increment_visits()
     mock_increment_local.assert_not_called()
