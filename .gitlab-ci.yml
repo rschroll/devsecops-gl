@@ -9,3 +9,10 @@ unit-test:
     - echo "Installing dependencies and running tests..."
     - uv sync
     - uv run pytest -v tests/test_unit.py
+
+lint:
+  image: $UV_IMAGE
+  script:
+    - cd project/images/web-service
+    - uv sync
+    - uv run ruff check src/
