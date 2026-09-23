@@ -39,8 +39,7 @@ integration-test:
     VISIT_COUNTER_FILE: "/tmp/visits.txt"
 
   before_script:
-    - apk add --no-cache curl bash
-    - uv sync --project images/web-service/ --frozen
+    - apk add --no-cache curl
     - |
       echo "waiting for ollama..."
       for i in $(seq 1 30); do
@@ -61,6 +60,7 @@ integration-test:
         -d "{\"name\": \"${OLLAMA_MODEL}\", \"stream\": false}" \
         --max-time 300
   script:
-    - uv sync --project images/web-service/
-    - uv run --project images/web-service/ pytest images/web-service/tests/test_integration.py
+    - cd project/images/web-service
+    - uv sync
+    - uv run pytest -v test_integration.py
 
