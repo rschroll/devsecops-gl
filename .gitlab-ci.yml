@@ -62,5 +62,5 @@ integration-test:
   script:
     - cd project/images/web-service
     - uv sync
-    - uv run pytest -v test_integration.py
+    - uv run pytest -v tests/test_integration.py
 
