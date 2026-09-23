@@ -1,11 +1,6 @@
-cache:
-  paths:
-    - /tmp/.uv-cache/
-
 variables:
   UV_IMAGE: "ghcr.io/astral-sh/uv:python3.14-alpine"
   UV_LINK_MODE: copy
-  UV_CACHE_DIR: /tmp/.uv-cache/
 
 unit-test:
   image: $UV_IMAGE
