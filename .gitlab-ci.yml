@@ -4,4 +4,5 @@ unit-test:
     - cd project/images/web-service/
     - echo "Installing dependencies and running tests..."
     - uv sync
+    - false
     - uv run pytest -v tests/test_unit.py
