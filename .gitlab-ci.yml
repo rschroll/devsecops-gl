@@ -1,8 +1,16 @@
+cache:
+  paths:
+    - .uv-cache/
+
+variables:
+  UV_IMAGE: "ghcr.io/astral-sh/uv:python3.14-alpine"
+  UV_LINK_MODE: copy
+  UV_CACHE_DIR: .uv-cache/
+
 unit-test:
-  image: ghcr.io/astral-sh/uv:python3.14-alpine
+  image: $UV_IMAGE
   script:
     - cd project/images/web-service/
     - echo "Installing dependencies and running tests..."
     - uv sync
-    - "false"
     - uv run pytest -v tests/test_unit.py
