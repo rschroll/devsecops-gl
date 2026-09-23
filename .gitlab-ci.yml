@@ -16,3 +16,9 @@ lint:
     - cd project/images/web-service
     - uv sync
     - uv run ruff check src/
+
+validate-k8s-manifests:
+  script:
+    - curl -Lo kubeconform.tar.gz https://github.com/yannh/kubeconform/releases/latest/download/kubeconform-linux-amd64.tar.gz
+    - tar xzf kubeconform.tar.gz kubeconform
+    - ./kubeconform -summary project/services
