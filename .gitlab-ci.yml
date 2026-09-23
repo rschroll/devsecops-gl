@@ -1,25 +1,7 @@
-cache:
-  paths:
-    - .uv-cache/
-
-variables:
-  UV_VERSION: "0.12.15"
-  PYTHON_VERSION: "3.14"
-  BASE_LAYER: trixie-slim
-  # GitLab CI creates a separate mountpoint for the build directory,
-  # so we need to copy instead of using hard links.
-  UV_LINK_MODE: copy
-  UV_CACHE_DIR: ".uv-cache/"
-
-lint-code:
-  image: ghcr.io/astral-sh/uv:$UV_VERSION-python$PYTHON_VERSION-$BASE_LAYER
-  script:
-    - echo "Running linting with ruff (not really)..."
-    - test true # uv run ruff images/web-service/src/web_service/__init__.py
-
 unit-test:
-  image: ghcr.io/astral-sh/uv:$UV_VERSION-python$PYTHON_VERSION-$BASE_LAYER
+  image: ghcr.io/astral-sh/uv:python3.14-alpine
   script:
+    - cd project/images/web-service/
     - echo "Installing dependencies and running tests..."
-    - uv sync --project project/images/web-service/
-    - uv run --project project/images/web-service/ pytest project/images/web-service/tests/test_unit.py
+    - uv sync
+    - uv run pytest -v tests/test_unit.py
