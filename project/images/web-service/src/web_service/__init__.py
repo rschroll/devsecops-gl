@@ -98,7 +98,7 @@ def api_status():
     ollama_status = {"url": OLLAMA_URL, "model": OLLAMA_MODEL}
     try:
         models = [m.model for m in ollama.Client(host=OLLAMA_URL).list().models]
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         ollama_status["status"] = "unavailable"
         ollama_status["error"] = str(exc)
     else:
@@ -132,4 +132,4 @@ def chat() -> str:
 
 
 def main() -> None:
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8000)))
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", "8000")))
