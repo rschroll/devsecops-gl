@@ -106,9 +106,12 @@ update-image:
     - git diff --quiet || CHANGES_EXIST=true
     - |
       if [ "$CHANGES_EXIST" = true ]; then
+        echo "Changes to docker image.  Pushing new image."
         PARA=$'\n\n'
         git add project/services/web-service.yaml
         git commit -m "Update web-service image tag [skip ci]${PARA}Now set to ${IMAGE_TAG}"
         git push https://oauth2:${GITLAB_WRITE_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git HEAD:main
+      else
+        echo "Docker image unchanged."
       fi
 # Or, store the docker image in an artifact in build stage, but only push here?
