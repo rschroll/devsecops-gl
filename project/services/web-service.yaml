@@ -46,7 +46,7 @@ metadata:
   name: web-server
   namespace: dso-project
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   selector:
     app: web-service
   ports:
