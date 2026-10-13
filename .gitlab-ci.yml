@@ -80,15 +80,17 @@ build-image:
   variables:
     DOCKER_TLS_CERTDIR: "/certs"
     IMAGE_NAME: $CI_REGISTRY_IMAGE/web-server
-  before_script:
-    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
   script:
     - IMAGE_TAG=$IMAGE_NAME:$(git rev-parse HEAD:project/images/web-service)
     - echo "IMAGE_TAG=${IMAGE_TAG}" >> build.env
     - echo "Building image ${IMAGE_TAG}"
     - docker build project/images/web-service -t $IMAGE_TAG
-    - docker push $IMAGE_TAG
+    - docker save -o web-service.tar $IMAGE_TAG
   artifacts:
+    name: "docker-image-$CI_COMMIT_SHORT_SHA"
+    paths:
+      - web-service.tar
+    expire_in: 1 day
     reports:
       dotenv: build.env
 
@@ -96,11 +98,15 @@ update-image:
   stage: update
   dependencies:
     - build-image
+  image: docker:27-cli
+  services:
+    - docker:27-dind
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
   before_script:
     - git config --global user.name "GitLab CI"
     - git config --global user.email "ci@gitlab.com"
+    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
   script:
     - 'sed -i "s|image: ${CI_REGISTRY_IMAGE}.*|image: ${IMAGE_TAG}|g" project/services/web-service.yaml'
     - git diff --quiet || CHANGES_EXIST=true
@@ -108,6 +114,8 @@ update-image:
       if [ "$CHANGES_EXIST" = true ]; then
         echo "Changes to docker image.  Pushing new image."
         PARA=$'\n\n'
+        docker load -i web-service.tar
+        docker push $IMAGE_TAG
         git add project/services/web-service.yaml
         git commit -m "Update web-service image tag [skip ci]${PARA}Now set to ${IMAGE_TAG}"
         git push https://oauth2:${GITLAB_WRITE_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git HEAD:main
