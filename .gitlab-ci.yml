@@ -99,7 +99,7 @@ update-image:
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
   script:
-    - sed -i "s/image: ${CI_REGISTRY_IMAGE}.*/image: ${IMAGE_TAG}" project/services/web-service.yaml
+    - 'sed -i "s/image: ${CI_REGISTRY_IMAGE}.*/image: ${IMAGE_TAG}" project/services/web-service.yaml'
     - git diff --quiet || CHANGES_EXIST=true
     - |
       if [ "$CHANGES_EXIST" = true ]; then
