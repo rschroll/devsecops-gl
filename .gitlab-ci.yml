@@ -1,6 +1,7 @@
 stages:
   - test
   - build
+  - update
   
 variables:
   UV_IMAGE: "ghcr.io/astral-sh/uv:python3.14-alpine"
@@ -90,3 +91,20 @@ build-image:
   artifacts:
     reports:
       dotenv: build.env
+
+update-image:
+  stage: update
+  dependencies:
+    - build-image
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+  script:
+    - sed -i "s/image: ${CI_REGISTRY_IMAGE}.*/image: ${IMAGE_TAG}" project/services/web-service.yaml
+    - git diff --quiet || CHANGES_EXIST=true
+    - |
+      if [ "$CHANGES_EXIST" = true ]; then
+        git add project/services/web-service.yaml
+        git commit -m "Update web-service image tag [skip ci]\n\nNow set to ${IMAGE_TAG}"
+        git push https://oauth2:${GITLAB_WRITE_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git HEAD:main
+      fi
+# Or, store the docker image in an artifact in build stage, but only push here?
