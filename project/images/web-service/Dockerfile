@@ -1,5 +1,5 @@
 # Builder stage
-FROM ghcr.io/astral-sh/uv:python3.14-alpine AS builder
+FROM ghcr.io/astral-sh/uv@sha256:95e4e621673cb57665d273bb34652e1c452233afc109c1bd83af694ae4f1ab57 AS builder
 
 ENV UV_COMPILE_BYTECODE=1
 ENV UV_LINK_MODE=copy
@@ -11,7 +11,7 @@ COPY . /app
 RUN uv sync --frozen --no-dev --no-editable
 
 # Final stage
-FROM python:3.14-alpine
+FROM python@sha256:7f2ec713f0436c59df2362d973b6a05af9e87ba78f0e94f5245c302984a7a1fd
 
 ARG USER_UID=1000
 ARG USER_GID=1000
