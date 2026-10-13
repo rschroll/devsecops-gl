@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: web-container
-          image: registry.gitlab.com/pragdata/devsecops-gl2/web-server:b0d870836b211b36e6c08e1831bdc727712eb8fc
+          image: registry.gitlab.com/pragdata/devsecops-gl2/web-server:fed6c91690a9fb1d0fcbad60032e81951a823e8f
           ports:
             - containerPort: 8000
               name: "http"
