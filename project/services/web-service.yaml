@@ -14,7 +14,7 @@ spec:
   selector:
     matchLabels:
       app: web-service
-  replicas: 5
+  replicas: 3
   template:
     metadata:
       name: web-pod
