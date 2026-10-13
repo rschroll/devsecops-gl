@@ -78,11 +78,16 @@ build-image:
     - docker:27-dind
   variables:
     DOCKER_TLS_CERTDIR: "/certs"
+    IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  before_script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
   script:
     - echo "Testing that the Docker image builds successfully..."
-    - docker build project/images/web-service -t web-service
+    - docker build project/images/web-service -t $IMAGE_TAG
+    - echo "Pushing to registry..."
+    - docker push $IMAGE_TAG
     - echo "Exporting image to a tarball file..."
-    - docker save -o web-service.tar web-service:latest
+    - docker save -o web-service.tar $IMAGE_TAG
   artifacts:
     name: "docker-image-$CI_COMMIT_SHORT_SHA"
     paths:
