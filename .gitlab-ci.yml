@@ -107,6 +107,23 @@ deploy-image:
     - |
       echo "$CI_REGISTRY_PASSWORD" |
       docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
+    - git config --global user.name "GitLab CI"
+    - git config --global user.email "ci@gitlab.com"
   script:
-    - docker load -i web-service.tar
-    - docker push $IMAGE_TAG
+    - |
+      sed -i "s|image: ${CI_REGISTRY_IMAGE}.*|image: ${IMAGE_TAG}|g" \
+        project/services/web-service.yaml'
+    - git diff --quiet || TAG_CHANGED=true
+    - |
+      if [ "$TAG_CHANGED" = true ]; then
+        echo "Changes to docker image.  Pushing new image."
+        docker load -i web-service.tar
+        docker push $IMAGE_TAG
+        git add project/services/web-service.yaml
+        git commit -m "Update web-service image tag [skip ci]
+
+      Now set to ${IMAGE_TAG}"
+        git push https://oauth2:${GITLAB_WRITE_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git HEAD:main
+      else
+        echo "Docker image unchanged."
+      fi
