@@ -98,7 +98,7 @@ deploy-image:
   stage: deploy
   dependencies:
     - build-image
-  image: docker: 27-cli
+  image: docker:27-cli
   services:
     - docker:27-dind
   rules:
